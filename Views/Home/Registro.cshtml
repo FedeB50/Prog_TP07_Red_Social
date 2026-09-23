@@ -1,0 +1,39 @@
+@{
+    ViewData["Title"] = "Registro";
+}
+<script src="~/js/site.js"></script>
+<div class="text-center">
+    <h1 class="display-4">Registro</h1>
+    <form method="post" asp-controller="Home" asp-action="guardarRegistro">
+        <div>
+            <label for="username">Username</label>
+            <input type="text" name="username" id="username" oninput="requisitosMinimosUsuario()" required />
+        </div>
+
+        <div id="requisitos-usuario" style="color: red;">
+        
+        </div>
+            
+        <div>
+            <label for="password">Password</label>
+            <input type="password" name="password" id="password" oninput="requisitosMinimosContraseña()" required />
+        </div>
+
+        <div id="requisitos-contraseña" style="color: red;">
+            
+        </div>
+
+        <div>
+            <label for="nombre">Nombre</label>
+            <input type="text" name="nombre" id="nombre" required />
+        </div>
+
+        <div>
+            <label for="apellido">Apellido</label>
+            <input type="text" name="apellido" id="apellido" required />
+        </div>
+
+        <button type="submit" id="boton" disabled>Registrarse</button>
+    </form>
+    <p>¿Ya tienes una cuenta? <a href="Login">Inicia sesión aquí</a></p>
+</div>
