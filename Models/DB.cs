@@ -54,5 +54,14 @@ public class DB
             connection.Execute(query, new { Username = username });
         }
     }
+
+    public void CrearPublicacion(string imagen, int idUsuario, string descripcion, string titulo, DateTime fechaHora)
+    {
+        string query = "INSERT INTO Publicaciones (Imagen, IdUsuario, Descripcion, Titulo, FechaPublicacion) VALUES (@Imagen, @IdUsuario, @Descripcion, @Titulo, @FechaHora)";
+        using (SqlConnection connection = new SqlConnection(_connectionString))
+        {
+            connection.Execute(query, new { Imagen = imagen, IdUsuario = idUsuario, Descripcion = descripcion, Titulo = titulo, FechaPublicacion = fechaHora });
+        }
+    }
     
 }

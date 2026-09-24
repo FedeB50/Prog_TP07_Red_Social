@@ -1,16 +1,23 @@
+using System;
 using System.Diagnostics;
+using System.IO;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using TP05.Models;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Hosting;
+using TP07_Barg.Models;
 
-namespace TP05.Controllers;
+namespace TP07_Barg.Controllers;
 
 public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
+    private readonly IWebHostEnvironment _env;
 
-    public HomeController(ILogger<HomeController> logger)
+    public HomeController(ILogger<HomeController> logger, IWebHostEnvironment env)
     {
         _logger = logger;
+        _env = env;
     }
 
     public IActionResult Login()
@@ -68,10 +75,10 @@ public class HomeController : Controller
                 return RedirectToAction("Index");
             }
             HttpContext.Session.SetString("error", "Contraseña incorrecta");
-            return View("Error");
+            return RedirectToAction("Error");
         }    
         HttpContext.Session.SetString("error", "Usuario incorrecto");
-        return View("Error");
+        return RedirectToAction("Error");
     }
 
     public IActionResult Index()
@@ -91,5 +98,39 @@ public class HomeController : Controller
     {
         ViewBag.error = HttpContext.Session.GetString("error");
         return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> hacerPublicacion(IFormFile img, string titulo, string descripcion)
+    {
+        int idUsuario = int.Parse(HttpContext.Session.GetString("idUsuario"));
+        DateTime fechaHora = DateTime.Now;
+
+        //Le pregunté a copilot cómo subir la imagen a la carpeta wwwroot/images
+        var uploadsFolder = Path.Combine(_env.WebRootPath ?? "wwwroot", "images");
+        Directory.CreateDirectory(uploadsFolder);
+
+        var ext = Path.GetExtension(img.FileName);
+        var fileNameOnly = Path.GetFileNameWithoutExtension(img.FileName);
+        var uniqueName = fileNameOnly + "_" + Guid.NewGuid().ToString("N") + ext;
+        var filePath = Path.Combine(uploadsFolder, uniqueName);
+
+        using (var stream = new FileStream(filePath, FileMode.Create))
+        {
+            await img.CopyToAsync(stream);
+        }
+
+        string relativePath = "/images/" + uniqueName;
+
+        // Guardar en la base de datos la publicación
+        DB db = new DB();
+        db.CrearPublicacion(relativePath, idUsuario, descripcion, titulo, fechaHora);
+
+        return RedirectToAction("Index");
+    }
+
+    public IActionResult DevPublicacion()
+    {
+        return View();
     }
 }

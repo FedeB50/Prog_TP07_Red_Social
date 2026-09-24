@@ -1,0 +1,24 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+<!-- Le pregunté a copilot cómo hacer para que el usuario pueda subir imágenes en un formulariio -->
+<div class="formPublicacion">
+    <h2>Crear publicación</h2>
+    <form method="post" asp-action="hacerPublicacion" enctype="multipart/form-data">
+        <div class="mb-3">
+            <label for="titulo" class="form-label">Título</label>
+            <input type="text" class="form-control" id="titulo" name="titulo" required />
+        </div>
+        <div class="mb-3">
+            <label for="descripcion" class="form-label">Descripción</label>
+            <textarea class="form-control" id="descripcion" name="descripcion" rows="5" required></textarea>
+        </div>
+
+        <div class="mb-3">
+            <label for="img" class="form-label">Imagen</label>
+            <input type="file" class="form-control" id="img" name="img" accept="image/*" required />
+        </div>
+        <button type="submit" class="btn btn-primary">Publicar</button>
+    </form>
+
+</div>
