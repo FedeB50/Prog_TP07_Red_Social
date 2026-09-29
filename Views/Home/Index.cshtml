@@ -2,12 +2,13 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="publicacion">
-    <div class="imagen">
-        <img src="~/images/imagen.jpg" alt="" />
+@foreach (Publicaciones publicacion in ViewBag.publicaciones)
+{
+    <div class="publicacion">
+        <h2>@publicacion.titulo</h2>
+        <p>@publicacion.descripcion</p>
+        <img src="~/images/@publicacion.imagen" alt="Descripción de la imagen">
+        <p>Publicado por: @ViewBag.arroba@publicacion.username</p>
+        <p>Fecha de publicación: @publicacion.fechaPublicacion.ToString("dd/MM/yyyy HH:mm")</p>
     </div>
-    <div class="contenido">
-        <h2>Título de la publicación</h2>
-        <p>Contenido de la publicación...</p>
-    </div>
-</div>
+}

@@ -1,7 +1,9 @@
-namespace TP07_Barg.Models;
 using Microsoft.Data.SqlClient;
 using Dapper;
-using TP07_Barg.Models;
+using System.Collections.Generic;
+
+namespace TP07_Barg.Models;
+
 public class DB
 {
     string _connectionString = @"Server=localhost;DataBase=DBRedSocial;Integrated Security=True;TrustServerCertificate=True;";
@@ -63,5 +65,15 @@ public class DB
             connection.Execute(query, new { Imagen = imagen, IdUsuario = idUsuario, Descripcion = descripcion, Titulo = titulo, FechaPublicacion = fechaHora });
         }
     }
-    
+
+    public List<Publicaciones> getPublicaciones()
+    {
+        List<Publicaciones> publicaciones = new List<Publicaciones>();
+        string query = "SELECT p.id, username, Titulo, Descripcion, Imagen, FechaPublicacion FROM Publicaciones p INNER JOIN Usuarios u ON p.IdUsuario = u.id ORDER BY FechaPublicacion DESC";
+        using (SqlConnection connection = new SqlConnection(_connectionString))
+        {
+            publicaciones = connection.Query<Publicaciones>(query).ToList();
+        }
+        return publicaciones;
+    }
 }

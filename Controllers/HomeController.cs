@@ -86,8 +86,8 @@ public class HomeController : Controller
         DB bd = new DB();
         if (bd.getUsername(HttpContext.Session.GetString("username")))
         {
-            ViewBag.nombre = HttpContext.Session.GetString("nombre");
-            ViewBag.apellido = HttpContext.Session.GetString("apellido");
+            ViewBag.publicaciones = bd.getPublicaciones();
+            ViewBag.arroba = "@";
             return View();
         }
         return RedirectToAction ("Login");
@@ -107,30 +107,33 @@ public class HomeController : Controller
         DateTime fechaHora = DateTime.Now;
 
         //Le pregunté a copilot cómo subir la imagen a la carpeta wwwroot/images
-        var uploadsFolder = Path.Combine(_env.WebRootPath ?? "wwwroot", "images");
+        string uploadsFolder = Path.Combine("wwwroot", "images");
         Directory.CreateDirectory(uploadsFolder);
 
-        var ext = Path.GetExtension(img.FileName);
-        var fileNameOnly = Path.GetFileNameWithoutExtension(img.FileName);
-        var uniqueName = fileNameOnly + "_" + Guid.NewGuid().ToString("N") + ext;
-        var filePath = Path.Combine(uploadsFolder, uniqueName);
+        string ext = Path.GetExtension(img.FileName);
+        string fileNameOnly = Path.GetFileNameWithoutExtension(img.FileName);
+        string nombreImagen = fileNameOnly + "_" + Guid.NewGuid().ToString("N") + ext;
+        string filePath = Path.Combine(uploadsFolder, nombreImagen);
 
-        using (var stream = new FileStream(filePath, FileMode.Create))
+        using (FileStream stream = new FileStream(filePath, FileMode.Create))
         {
             await img.CopyToAsync(stream);
         }
 
-        string relativePath = "/images/" + uniqueName;
-
         // Guardar en la base de datos la publicación
         DB db = new DB();
-        db.CrearPublicacion(relativePath, idUsuario, descripcion, titulo, fechaHora);
+        db.CrearPublicacion(nombreImagen, idUsuario, descripcion, titulo, fechaHora);
 
         return RedirectToAction("Index");
     }
 
     public IActionResult DevPublicacion()
     {
-        return View();
+        DB bd = new DB();
+        if (bd.getUsername(HttpContext.Session.GetString("username")))
+        {
+            return View();
+        }
+        return RedirectToAction("Login");
     }
 }
