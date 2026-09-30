@@ -54,3 +54,31 @@ function verificarBoton() {
         boton.disabled = true;
     }
 }
+
+function DarLike(idPublicacion)
+{
+    fetch( '/Home/Like?IdPublicacion=' + idPublicacion, {method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+    })
+    .then(response => response.json())
+    .then(data => {
+         document.getElementById("cantLikes_" + idPublicacion).innerHTML = data;
+        })
+    .catch((error) => {
+        console.error('Error:', error);
+    });
+}
+
+function HacerComentario(idPublicacion, comentario)
+{
+    fetch( '/Home/Like?IdPublicacion=' + idPublicacion, {method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+    })
+    .then(response => response.json())
+    .then(data => {
+         document.getElementById("cantLikes_" + idPublicacion).innerHTML = data;
+        })
+    .catch((error) => {
+        console.error('Error:', error);
+    });
+}

@@ -10,5 +10,21 @@
         <img src="~/images/@publicacion.imagen" alt="Descripción de la imagen">
         <p>Publicado por: @ViewBag.arroba@publicacion.username</p>
         <p>Fecha de publicación: @publicacion.fechaPublicacion.ToString("dd/MM/yyyy HH:mm")</p>
+        <button onclick="DarLike(@publicacion.id)">
+            Me gusta 👍 <p id="cantLikes_@publicacion.id">Likes: @ViewBag.Likes[publicacion.id]</p>
+        </button>
+        @foreach (Comentarios comentario in ViewBag.comentarios)
+        {
+            if (comentario.idPublicacion == publicacion.id)
+            {
+                <div class="comentario">
+                    <p>@comentario.texto</p>
+                    <p>Publicado por: @ViewBag.arroba@comentario.username</p>
+                    <p>Fecha de publicación: @comentario.fechaPublicacion.ToString("dd/MM/yyyy HH:mm")</p>
+                </div>
+            }
+        }
+        <textarea name="texto" id="texto_@publicacion.id" placeholder="Escribe tu comentario aquí..." required></textarea>
+        <button onclick="HacerComentario(@publicacion.id, document.getElementById('texto_@publicacion.id').value)">Comentar</button>
     </div>
 }

@@ -87,6 +87,12 @@ public class HomeController : Controller
         if (bd.getUsername(HttpContext.Session.GetString("username")))
         {
             ViewBag.publicaciones = bd.getPublicaciones();
+            ViewBag.comentarios = bd.getComentarios();
+            ViewBag.Likes = new Dictionary<int, int>();
+            foreach(Publicaciones publicacion in ViewBag.publicaciones)
+            {
+                ViewBag.Likes[publicacion.id] = bd.GetLikes(publicacion.id);
+            }
             ViewBag.arroba = "@";
             return View();
         }
@@ -135,5 +141,13 @@ public class HomeController : Controller
             return View();
         }
         return RedirectToAction("Login");
+    }
+
+    [HttpGet]
+    public string Like(int IdPublicacion)
+    {
+        DB MiBD = new DB();
+        MiBD.DarLike(IdPublicacion, int.Parse(HttpContext.Session.GetString("idUsuario")));
+        return MiBD.GetLikes(IdPublicacion).ToString();
     }
 }

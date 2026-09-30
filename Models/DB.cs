@@ -76,4 +76,63 @@ public class DB
         }
         return publicaciones;
     }
+
+    public void DarLike(int IdPublicacion, int IdUsuario)
+    {
+        if (VerificarLike(IdPublicacion, IdUsuario) <= 0)
+        {
+            string SQL = "INSERT INTO PublicacionesMeGusta (IdPublicación, IdUsuario) VALUES (@pIdPublicacion, @pIdUsuario)"; 
+            using(SqlConnection db = new SqlConnection(_connectionString))
+            {
+                db.Execute(SQL, new {pIdPublicacion = IdPublicacion, pIdUsuario = IdUsuario} ); 
+            }
+        }
+        else
+        {
+            SacarLike(IdPublicacion, IdUsuario);
+        }
+        return;        
+    }
+
+    public void SacarLike(int IdPublicacion, int IdUsuario)
+    {
+        string SQL = "DELETE FROM PublicacionesMeGusta WHERE IdPublicación=@pIdPublicacion AND IdUsuario=@pIdUsuario"; 
+        using(SqlConnection db = new SqlConnection(_connectionString))
+        {
+            db.Execute(SQL, new {pIdPublicacion = IdPublicacion, pIdUsuario = IdUsuario} ); 
+        }
+    }
+
+    public int VerificarLike(int IdPublicacion, int IdUsuario)
+    {
+        string SQL = "SELECT COUNT(id) FROM PublicacionesMeGusta WHERE IdPublicación=@pIdPublicacion AND IdUsuario=@pIdUsuario"; 
+        int likes = 0;
+        using(SqlConnection db = new SqlConnection(_connectionString))
+        {
+            likes += db.QueryFirstOrDefault<int>(SQL, new {pIdPublicacion = IdPublicacion, pIdUsuario = IdUsuario} ); 
+        }
+        return likes;
+    }
+
+    public int GetLikes(int IdPublicacion)
+    {
+        int Likes = 0;
+        string SQL = "SELECT COUNT(id) FROM PublicacionesMeGusta WHERE IdPublicación=@pIdPublicacion"; 
+        using(SqlConnection db = new SqlConnection(_connectionString))
+        {
+            Likes = db.QueryFirstOrDefault<int>(SQL, new {pIdPublicacion = IdPublicacion} ); 
+        } 
+        return Likes;
+    }
+
+    public List<Comentarios> getComentarios()
+    {
+        List<Comentarios> comentarios = new List<Comentarios>();
+        string query = "SELECT c.id, idPublicacion, username, Texto, FechaComentario FROM Comentarios c INNER JOIN Usuarios u ON IdUsuarioComenta = u.id ORDER BY FechaComentario DESC";
+        using (SqlConnection connection = new SqlConnection(_connectionString))
+        {
+            comentarios = connection.Query<Comentarios>(query).ToList();
+        }
+        return comentarios;
+    }
 }
